@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>TrendyMart • Modern Shop</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"/>
+  
+  <style>
+    :root { --primary: 234 179 8; }
+    body {
+      background-color: rgb(9 9 11);
+      color: rgb(228 228 231);
+      font-family: system-ui, sans-serif;
+    }
+    [data-theme="light"] body {
+      background-color: rgb(250 250 250);
+      color: rgb(39 39 42);
+    }
+    .card {
+      transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .card:hover {
+      transform: translateY(-12px) scale(1.04);
+      box-shadow: 0 30px 60px -15px rgba(0,0,0,0.5);
+    }
+    .img-zoom {
+      transition: transform 0.7s ease;
+    }
+    .card:hover .img-zoom {
+      transform: scale(1.15);
+    }
+    .cart-drawer {
+      transition: transform 0.5s cubic-bezier(0.32, 0.72, 0, 1);
+    }
+    .cart-closed { transform: translateX(100%); }
+    .modal-content {
+      animation: modalPop 0.35s ease-out;
+    }
+    @keyframes modalPop {
+      from { opacity: 0; transform: scale(0.92) translateY(30px); }
+      to   { opacity: 1; transform: scale(1) translateY(0); }
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+  <!-- Top Nav -->
+  <nav class="sticky top-0 z-50 bg-zinc-950/90 backdrop-blur-xl border-b border-zinc-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 flex items-center justify-between">
+      <div class="flex items-center gap-4">
+        <div class="w-11 h-11 bg-yellow-400 rounded-2xl flex items-center justify-center text-zinc-950 font-bold text-3xl">TM</div>
+        <span class="text-3xl font-extrabold tracking-tight">TrendyMart</span>
+      </div>
+      <div class="flex items-center gap-6">
+        <button id="theme-toggle" class="text-2xl hover:text-yellow-400 transition">
+          <i class="fa-solid fa-moon"></i>
+        </button>
+        <button id="cart-btn" class="relative flex items-center gap-2 hover:text-yellow-400 transition text-2xl">
+          <i class="fa-solid fa-bag-shopping"></i>
+          <span id="cart-count" class="absolute -top-2 -right-2 bg-yellow-400 text-zinc-950 text-xs font-bold px-2 py-0.5 rounded-full">0</span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Filters -->
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 border-b border-zinc-800">
+    <div class="flex flex-wrap gap-5 items-center justify-center md:justify-start">
+      <input id="search" placeholder="Search products..." class="bg-zinc-800 border border-zinc-700 rounded-xl px-6 py-3 flex-1 max-w-md focus:outline-none focus:border-yellow-400" oninput="applyFilters()"/>
+      <select id="category" class="bg-zinc-800 border border-zinc-700 rounded-xl px-5 py-3 text-sm focus:outline-none focus:border-yellow-400" onchange="applyFilters()">
+        <option value="all">All Categories</option>
+        <option value="Electronics">Electronics</option>
+        <option value="Fashion">Fashion</option>
+        <option value="Home">Home</option>
+        <option value="Beauty">Beauty</option>
+      </select>
+      <select id="sort" class="bg-zinc-800 border border-zinc-700 rounded-xl px-5 py-3 text-sm focus:outline-none focus:border-yellow-400" onchange="applyFilters()">
+        <option value="featured">Featured</option>
+        <option value="price-low">Price: Low → High</option>
+        <option value="price-high">Price: High → Low</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Products Grid -->
+  <main class="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+    <div id="products" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8"></div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-zinc-950 border-t border-zinc-800 mt-auto">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-10">
+        <div>
+          <div class="flex items-center gap-3 mb-4">
+            <div class="w-10 h-10 bg-yellow-400 rounded-xl flex items-center justify-center text-zinc-950 font-bold text-2xl">TM</div>
+            <span class="text-2xl font-bold">TrendyMart</span>
+          </div>
+          <p class="text-zinc-400 text-sm">Modern shopping • Multan, Pakistan</p>
+        </div>
+        <div>
+          <h4 class="font-semibold mb-4">Quick Links</h4>
+          <ul class="space-y-2 text-sm text-zinc-400">
+            <li><a href="#" class="hover:text-yellow-400">Home</a></li>
+            <li><a href="#" class="hover:text-yellow-400">Shop</a></li>
+            <li><a href="#" class="hover:text-yellow-400">New Arrivals</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="font-semibold mb-4">Support</h4>
+          <ul class="space-y-2 text-sm text-zinc-400">
+            <li><a href="#" class="hover:text-yellow-400">Help Center</a></li>
+            <li><a href="#" class="hover:text-yellow-400">Returns</a></li>
+            <li><a href="#" class="hover:text-yellow-400">Contact Us</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="font-semibold mb-4">Follow Us</h4>
+          <div class="flex gap-5 text-2xl">
+            <a href="#" class="hover:text-yellow-400"><i class="fab fa-instagram"></i></a>
+            <a href="#" class="hover:text-yellow-400"><i class="fab fa-facebook"></i></a>
+            <a href="#" class="hover:text-yellow-400"><i class="fab fa-tiktok"></i></a>
+          </div>
+        </div>
+      </div>
+      <div class="border-t border-zinc-800 mt-10 pt-6 text-center text-sm text-zinc-500">
+        © 2026 TrendyMart. All rights reserved.
+      </div>
+    </div>
+  </footer>
+
+  <!-- Product Modal -->
+  <div id="product-modal" class="fixed inset-0 bg-black/85 hidden flex items-center justify-center z-50 p-4" onclick="if(event.target === this) closeModal()">
+    <div class="modal-content bg-zinc-900 rounded-3xl max-w-4xl w-full overflow-hidden relative" onclick="event.stopPropagation()">
+      <button onclick="closeModal()" class="absolute top-5 right-6 text-4xl text-zinc-400 hover:text-white z-10">×</button>
+      
+      <div class="flex flex-col md:flex-row">
+        <div class="md:w-1/2 bg-zinc-950 p-10 flex items-center justify-center relative">
+          <img id="modal-img" class="max-h-[500px] w-full object-contain rounded-xl" alt="Product">
+          <button onclick="prevProduct()" class="absolute left-4 top-1/2 -translate-y-1/2 bg-black/60 hover:bg-black/80 w-12 h-12 flex items-center justify-center rounded-full text-4xl text-white transition">
+            ‹
+          </button>
+          <button onclick="nextProduct()" class="absolute right-4 top-1/2 -translate-y-1/2 bg-black/60 hover:bg-black/80 w-12 h-12 flex items-center justify-center rounded-full text-4xl text-white transition">
+            ›
+          </button>
+        </div>
+        
+        <div class="md:w-1/2 p-8 flex flex-col">
+          <h2 id="modal-title" class="text-4xl font-bold mb-2"></h2>
+          <p id="modal-owner" class="text-zinc-400 mb-4 text-lg"></p>
+          <div id="modal-price" class="text-5xl font-bold text-yellow-400 mb-8"></div>
+          <p id="modal-desc" class="text-zinc-300 leading-relaxed mb-10 flex-1"></p>
+          <button onclick="addToCartFromModal()" class="bg-yellow-400 hover:bg-yellow-300 text-zinc-950 font-bold py-5 rounded-2xl text-xl w-full transition">
+            Add to Cart
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cart Drawer -->
+  <div id="cart-drawer" class="cart-drawer fixed top-0 right-0 h-full w-full max-w-md bg-zinc-950 border-l border-zinc-800 shadow-2xl z-50 cart-closed overflow-y-auto">
+    <div class="p-8 flex flex-col h-full">
+      <div class="flex justify-between items-center mb-8">
+        <h2 class="text-3xl font-bold">Your Cart</h2>
+        <button id="close-cart" class="text-4xl text-zinc-400 hover:text-white">×</button>
+      </div>
+      <div id="cart-items" class="flex-1 space-y-6"></div>
+      <div class="pt-8 border-t border-zinc-800 mt-auto">
+        <div class="flex justify-between text-2xl mb-6">
+          <span>Total</span>
+          <span id="cart-total" class="font-bold text-yellow-400">$0.00</span>
+        </div>
+        <button class="w-full bg-yellow-400 hover:bg-yellow-300 text-zinc-950 font-bold py-5 rounded-2xl text-xl">
+          Proceed to Checkout
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div id="backdrop" class="fixed inset-0 bg-black/70 hidden z-40"></div>
+
+  <script>
+    const products = [
+      { id:1, title:"Wireless Earbuds Pro", owner:"AudioTrend", price:89.99, category:"Electronics", img:"https://picsum.photos/id/180/800/800", desc:"Active noise cancelling • 40h battery • IPX4 waterproof" },
+      { id:2, title:"Minimal Sneakers", owner:"UrbanWear", price:129.00, category:"Fashion", img:"https://picsum.photos/id/21/800/800", desc:"Premium leather upper • Breathable • Comfort sole" },
+      { id:3, title:"RGB Smart Lamp", owner:"LuminaTech", price:49.99, category:"Home", img:"https://picsum.photos/id/1060/800/800", desc:"16 million colors • App & voice control" },
+      { id:4, title:"Silk Eye Mask", owner:"DreamSoft", price:24.50, category:"Beauty", img:"https://picsum.photos/id/1015/800/800", desc:"100% mulberry silk • Adjustable strap • Blocks light" },
+      { id:5, title:"Portable Blender", owner:"NutriGo", price:39.99, category:"Home", img:"https://picsum.photos/id/433/800/800", desc:"USB rechargeable • 6 blades • Travel friendly" },
+      { id:6, title:"Polarized Sunglasses", owner:"VistaStyle", price:79.00, category:"Fashion", img:"https://picsum.photos/id/64/800/800", desc:"UV400 protection • Lightweight • Mirror lenses" },
+      { id:7, title:"Mechanical Keyboard", owner:"KeyForge", price:119.99, category:"Electronics", img:"https://picsum.photos/id/180/800/800", desc:"RGB backlit • Hot-swappable • Linear switches" },
+      { id:8, title:"Leather Crossbody", owner:"UrbanCraft", price:89.50, category:"Fashion", img:"https://picsum.photos/id/201/800/800", desc:"Genuine leather • Multiple compartments • Adjustable strap" },
+    ];
+
+    let cart = [];
+    let currentProductIndex = -1;
+
+    function renderProducts(filtered = products) {
+      const container = document.getElementById('products');
+      container.innerHTML = '';
+      
+      if (filtered.length === 0) {
+        container.innerHTML = '<div class="col-span-full text-center py-20 text-zinc-400"><i class="fa-solid fa-magnifying-glass text-6xl mb-4 opacity-50"></i><p class="text-xl">No products found</p></div>';
+        return;
+      }
+
+      filtered.forEach((p, idx) => {
+        container.innerHTML += `
+          <div onclick="showProductModal(${idx})" class="card bg-zinc-900 border border-zinc-800 rounded-3xl overflow-hidden cursor-pointer">
+            <div class="aspect-square">
+              <img src="${p.img}" class="w-full h-full object-cover img-zoom" alt="${p.title}"/>
+            </div>
+            <div class="p-6">
+              <h3 class="text-xl font-semibold mb-2">${p.title}</h3>
+              <p class="text-2xl font-bold text-yellow-400 mb-4">$${p.price.toFixed(2)}</p>
+              <button class="w-full bg-zinc-800 hover:bg-yellow-400 hover:text-zinc-950 py-3 rounded-xl transition pointer-events-none">
+                View Details
+              </button>
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    function showProductModal(index) {
+      currentProductIndex = index;
+      const p = products[index];
+      
+      document.getElementById('modal-img').src = p.img;
+      document.getElementById('modal-title').textContent = p.title;
+      document.getElementById('modal-owner').textContent = `by ${p.owner}`;
+      document.getElementById('modal-price').innerHTML = `$${p.price.toFixed(2)} <span class="text-2xl align-top">USD</span>`;
+      document.getElementById('modal-desc').textContent = p.desc;
+
+      document.getElementById('product-modal').classList.remove('hidden');
+      document.getElementById('product-modal').classList.add('flex');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal() {
+      document.getElementById('product-modal').classList.add('hidden');
+      document.getElementById('product-modal').classList.remove('flex');
+      document.body.style.overflow = 'visible';
+    }
+
+    function nextProduct() {
+      currentProductIndex = (currentProductIndex + 1) % products.length;
+      showProductModal(currentProductIndex);
+    }
+
+    function prevProduct() {
+      currentProductIndex = (currentProductIndex - 1 + products.length) % products.length;
+      showProductModal(currentProductIndex);
+    }
+
+    function addToCartFromModal() {
+      addToCart(products[currentProductIndex].id);
+      // closeModal(); // optional - comment if you want to stay in modal
+    }
+
+    // Filters
+    function applyFilters() {
+      const search = document.getElementById('search').value.toLowerCase().trim();
+      const category = document.getElementById('category').value;
+      const sort = document.getElementById('sort').value;
+
+      let filtered = products.filter(p => {
+        const matchSearch = p.title.toLowerCase().includes(search);
+        const matchCategory = category === 'all' || p.category === category;
+        return matchSearch && matchCategory;
+      });
+
+      if (sort === 'price-low') filtered.sort((a,b) => a.price - b.price);
+      if (sort === 'price-high') filtered.sort((a,b) => b.price - a.price);
+
+      renderProducts(filtered);
+    }
+
+    // Cart functions
+    function addToCart(id) {
+      const prod = products.find(p => p.id === id);
+      const exist = cart.find(i => i.id === id);
+      if (exist) exist.qty = (exist.qty || 1) + 1;
+      else cart.push({...prod, qty: 1});
+      updateCart();
+      showToast(`Added ${prod.title}`);
+    }
+
+    function removeFromCart(id) {
+      cart = cart.filter(i => i.id !== id);
+      updateCart();
+    }
+
+    function updateCart() {
+      const count = cart.reduce((s, i) => s + (i.qty || 1), 0);
+      document.getElementById('cart-count').textContent = count;
+
+      document.getElementById('cart-items').innerHTML = cart.length === 0 
+        ? '<div class="text-center py-20 text-zinc-500"><i class="fa-solid fa-bag-shopping text-7xl opacity-30 mb-4"></i><p class="text-xl">Your cart is empty</p></div>'
+        : cart.map(item => `
+            <div class="flex gap-5 bg-zinc-900 p-5 rounded-2xl border border-zinc-800">
+              <img src="${item.img}" class="w-24 h-24 object-cover rounded-xl"/>
+              <div class="flex-1">
+                <p class="font-medium text-lg">${item.title}</p>
+                <p class="text-yellow-400 mt-1">$${item.price} × ${item.qty}</p>
+              </div>
+              <button onclick="removeFromCart(${item.id})" class="text-red-400 self-start">
+                <i class="fa-solid fa-trash-can"></i>
+              </button>
+            </div>
+          `).join('');
+
+      const total = cart.reduce((s, i) => s + i.price * (i.qty || 1), 0);
+      document.getElementById('cart-total').textContent = `$${total.toFixed(2)}`;
+    }
+
+    function showToast(msg) {
+      const t = document.createElement('div');
+      t.className = 'fixed bottom-8 right-8 bg-zinc-900 border border-yellow-400 text-yellow-400 px-8 py-5 rounded-2xl shadow-2xl flex items-center gap-4 z-50';
+      t.innerHTML = `<i class="fa-solid fa-check-circle text-2xl"></i> ${msg}`;
+      document.body.appendChild(t);
+      setTimeout(() => { t.style.opacity = '0'; setTimeout(() => t.remove(), 600); }, 2500);
+    }
+
+    // Event Listeners
+    document.getElementById('cart-btn').onclick = () => {
+      document.getElementById('cart-drawer').classList.remove('cart-closed');
+      document.getElementById('backdrop').classList.remove('hidden');
+    };
+
+    function closeCart() {
+      document.getElementById('cart-drawer').classList.add('cart-closed');
+      document.getElementById('backdrop').classList.add('hidden');
+    }
+
+    document.getElementById('close-cart').onclick = closeCart;
+    document.getElementById('backdrop').onclick = closeCart;
+
+    document.getElementById('theme-toggle').onclick = () => {
+      const html = document.documentElement;
+      const isDark = html.getAttribute('data-theme') === 'dark';
+      html.setAttribute('data-theme', isDark ? 'light' : 'dark');
+      document.getElementById('theme-toggle').innerHTML = isDark ? '<i class="fa-solid fa-sun"></i>' : '<i class="fa-solid fa-moon"></i>';
+    };
+
+    // Keyboard navigation for modal
+    document.addEventListener('keydown', e => {
+      if (document.getElementById('product-modal').classList.contains('hidden')) return;
+      if (e.key === 'ArrowRight') nextProduct();
+      if (e.key === 'ArrowLeft') prevProduct();
+      if (e.key === 'Escape') closeModal();
+    });
+
+    // Init
+    renderProducts();
+    updateCart();
+  </script>
+</body>
+</html>
